@@ -1,3 +1,5 @@
+import { freezeAllTabs, freezeSelectedTabs } from '../utils/tab-freezer.js';
+
 document.addEventListener("DOMContentLoaded", () => {
   const freezeAllBtn = document.getElementById('freezeAllBtn');
   const freezeSelectedBtn = document.getElementById('freezeSelectedBtn');
@@ -5,29 +7,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!freezeAllBtn || !freezeSelectedBtn || !statusDiv) return;
 
+  chrome.commands.getAll().then(commands => {
+    const freezeAllCommand = commands.find(cmd => cmd.name === 'freeze-all');
+    if (freezeAllCommand && freezeAllCommand.shortcut) {
+      freezeAllBtn.querySelector('.shortcut')!.textContent = `(${freezeAllCommand.shortcut})`;
+    }
+
+    const freezeSelectedCommand = commands.find(cmd => cmd.name === 'freeze-selected');
+    if (freezeSelectedCommand && freezeSelectedCommand.shortcut) {
+      freezeSelectedBtn.querySelector('.shortcut')!.textContent = `(${freezeSelectedCommand.shortcut})`;
+    }
+  });
+
   // Freeze all tabs button
   freezeAllBtn.addEventListener('click', async () => {
     try {
-      // Get all tabs in the current window
-      const tabs = await chrome.tabs.query({ currentWindow: true });
+      const frozenCount = await freezeAllTabs();
 
-      if (tabs.length === 0) {
+      if (frozenCount === 0) {
         showStatus(statusDiv, 'No tabs to freeze');
         return;
       }
 
-      // Discard all tabs to freeze them (they won't be unloaded, just put in sleep mode)
-      const tabIds = tabs.map(tab => tab.id).filter((id): id is number => id !== undefined);
-      
-      for (const tabId of tabIds) {
-        try {
-          await chrome.tabs.discard(tabId);
-        } catch (error) {
-          console.error(`Failed to discard tab ${tabId}:`, error);
-        }
-      }
-
-      showStatus(statusDiv, `Froze ${tabIds.length} tab(s)!`);
+      showStatus(statusDiv, `Froze ${frozenCount} tab(s)!`);
       
       // Clear the status message after 3 seconds
       setTimeout(() => {
@@ -43,31 +45,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // Freeze selected tabs button
   freezeSelectedBtn.addEventListener('click', async () => {
     try {
-      // Get selected tabs in the current window, or the active tab if none are selected
-      let tabs = await chrome.tabs.query({ highlighted: true, currentWindow: true });
-      
-      // If no tabs are selected, get the currently active tab
-      if (tabs.length === 0) {
-        tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-      }
+      const frozenCount = await freezeSelectedTabs();
 
-      if (tabs.length === 0) {
+      if (frozenCount === 0) {
         showStatus(statusDiv, 'No tabs to freeze');
         return;
       }
 
-      // Discard selected tabs
-      const tabIds = tabs.map(tab => tab.id).filter((id): id is number => id !== undefined);
-      
-      for (const tabId of tabIds) {
-        try {
-          await chrome.tabs.discard(tabId);
-        } catch (error) {
-          console.error(`Failed to discard tab ${tabId}:`, error);
-        }
-      }
-
-      showStatus(statusDiv, `Froze ${tabIds.length} tab(s)!`);
+      showStatus(statusDiv, `Froze ${frozenCount} tab(s)!`);
       
       // Clear the status message after 3 seconds
       setTimeout(() => {

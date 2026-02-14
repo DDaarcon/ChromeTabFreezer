@@ -16,7 +16,7 @@
       width: 100%;
       padding: 12px;
       font-size: 16px;
-      background-color: #4CAF50;
+      background-color: #449fab;
       color: white;
       border: none;
       border-radius: 4px;
@@ -26,11 +26,15 @@
     }
     
     button:hover {
-      background-color: #45a049;
+      background-color: #4eb0bd;
     }
     
     button:active {
-      background-color: #3d8b40;
+      background-color: #50bdcb;
+    }
+
+    button .shortcut {
+      font-style: italic;
     }
     
     #status {
@@ -50,9 +54,15 @@
   </style>
 </head>
 <body>
-  <h2>Tab Freezer</h2>
-  <button id="freezeAllBtn">Freeze All Tabs</button>
-  <button id="freezeSelectedBtn">Freeze Selected</button>
+  <button id="freezeAllBtn">
+    <span class="button-title">Freeze All Tabs</span>
+    <span class="shortcut"></span>
+  </button>
+
+  <button id="freezeSelectedBtn">
+    <span class="button-title">Freeze Selected Tabs</span>
+    <span class="shortcut"></span>
+  </button>
   <div id="status"></div>
   
   <script type="module" src="./main-menu.js"></script>
