@@ -1,0 +1,24 @@
+{
+  "name": "chromenestedtabgroups",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build:ts": "tsc",
+    "build:copy": "copyfiles -u 1 \"src/**/*.{html,json,css}\" dist",
+    "build": "npm run build:ts && npm run build:copy",
+    "watch:ts": "tsc --watch",
+    "watch:copy": "chokidar \"src/**/*.{html,css,json}\" -c \"npm run build:copy\"",
+    "watch": "npm-run-all --parallel watch:ts watch:copy"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/chrome": "^0.0.328",
+    "chokidar-cli": "^3.0.0",
+    "copyfiles": "^2.4.1",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.8.3"
+  }
+}

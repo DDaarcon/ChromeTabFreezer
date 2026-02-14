@@ -1,0 +1,11 @@
+{
+  "name": "Tab freezer",
+  "description": "Freeze all currently opened Chrome tabs",
+  "version": "1.0",
+  "manifest_version": 3,
+  "permissions": ["tabs"],
+  "action": {
+    "default_popup": "mainMenu/mainMenuView.html",
+    "default_title": "Freeze all tabs"
+  }
+}
